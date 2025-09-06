@@ -1,0 +1,37 @@
+{
+  "name": "licenz",
+  "version": "1.0.0",
+  "description": "A decentralized content licensing platform for AI-generated content with blockchain protection and NFT capabilities",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "blockchain"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && go run main.go",
+    "dev:backend:check": "if (Test-Path \"backend/main.go\") { cd backend && go run main.go } else { echo \"Backend not found, skipping...\" }",
+    "dev:frontend-only": "npm run dev:frontend",
+    "dev:blockchain": "cd blockchain && npm run node",
+    "install:all": "npm install && cd frontend && npm install && cd ../blockchain && npm install",
+    "install:clean": "npm run clean && npm install && npm run install:all",
+    "build": "cd frontend && npm run build",
+    "build:blockchain": "cd blockchain && npm run compile",
+    "test": "cd blockchain && npm run test",
+    "clean": "npm run clean:all",
+    "clean:all": "Remove-Item -Recurse -Force node_modules, package-lock.json -ErrorAction SilentlyContinue && cd frontend && Remove-Item -Recurse -Force node_modules, package-lock.json -ErrorAction SilentlyContinue && cd ../blockchain && Remove-Item -Recurse -Force node_modules, package-lock.json -ErrorAction SilentlyContinue",
+    "size:analyze": "npm run size:frontend && npm run size:blockchain",
+    "size:frontend": "cd frontend && npx cost-of-modules",
+    "size:blockchain": "cd blockchain && npx cost-of-modules",
+    "deps:check": "npm outdated && cd frontend && npm outdated && cd ../blockchain && npm outdated",
+    "deps:update": "npm update && cd frontend && npm update && cd ../blockchain && npm update"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

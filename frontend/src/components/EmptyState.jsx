@@ -20,6 +20,17 @@ const EmptyState = ({ onGenerateClick, walletAddress }) => {
           <div className="absolute inset-0 w-24 h-24 bg-gradient-to-br from-purple-400 via-blue-500 to-indigo-600 rounded-full animate-ping opacity-20"></div>
         </div>
         
+        {/* Title */}
+        <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-4">
+          Your Content Library is Empty
+        </h2>
+        
+        {/* Description */}
+        <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+          Start creating amazing AI-generated content that will be automatically protected with blockchain licensing 
+          and ready for NFT minting. Your first masterpiece is just a prompt away!
+        </p>
+        
         {/* Features Grid */}
         <div className="grid md:grid-cols-3 gap-6 mb-10">
           <div className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border border-purple-200">
@@ -45,6 +56,23 @@ const EmptyState = ({ onGenerateClick, walletAddress }) => {
             <h3 className="font-semibold text-green-800 mb-2">NFT Ready</h3>
             <p className="text-sm text-green-600">Mint your content as NFTs instantly</p>
           </div>
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="space-y-4">
+          <button
+            onClick={onGenerateClick}
+            className="group bg-gradient-to-r from-purple-600 via-purple-700 to-blue-600 hover:from-purple-700 hover:via-purple-800 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center justify-center gap-3 mx-auto"
+          >
+            <PlusIcon className="w-5 h-5" />
+            <span>Create Your First AI Content</span>
+            <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
+          </button>
+          
+          <p className="text-sm text-gray-500">
+            Connected wallet: <span className="font-mono text-gray-700">{walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : 'Not connected'}</span>
+          </p>
+        </div>
         
         {/* Decorative Elements */}
         <div className="flex justify-center space-x-2 mt-8">
@@ -55,5 +83,6 @@ const EmptyState = ({ onGenerateClick, walletAddress }) => {
       </div>
     </div>
   );
+};
 
 export default EmptyState;

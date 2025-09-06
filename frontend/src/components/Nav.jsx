@@ -13,7 +13,18 @@ const Nav = ({ activeTab, onTabChange, contentCount }) => {
       icon: SparklesIcon,
       count: null
     },
-    
+    {
+      id: 'content',
+      label: 'Content Library',
+      icon: FolderIcon,
+      count: contentCount
+    },
+    {
+      id: 'blockchain',
+      label: 'Blockchain',
+      icon: BoltIcon,
+      count: null
+    }
   ];
 
   return (
