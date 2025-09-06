@@ -21,12 +21,7 @@ const Tab = ({ generatedContent, walletConnected, onDisconnect }) => {
             </p>
             
             {/* Wallet Address Display */}
-            <div className="bg-gray-50 rounded-lg p-3 mb-4">
-              <p className="text-xs text-gray-500 mb-1">Wallet Address</p>
-              <p className="text-sm font-mono text-gray-800 break-all">
-                {generatedContent?.walletAddress || '0x742d35Cc6634C0532925a3b8D404d2E5B4C9a8a8'}
-              </p>
-            </div>
+            
             
             <button
               onClick={onDisconnect}
