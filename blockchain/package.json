@@ -1,0 +1,21 @@
+{
+  "name": "blockchain",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "deploy": "npx hardhat run scripts/deploy.js --network localhost",
+    "test": "npx hardhat test",
+    "compile": "npx hardhat compile",
+    "node": "npx hardhat node",
+    "clean": "npx hardhat clean"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.9.3",
+    "dotenv": "^17.2.1",
+    "ethers": "^6.15.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
+    "hardhat": "^2.26.2"
+  }
+}
