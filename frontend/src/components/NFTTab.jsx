@@ -49,19 +49,7 @@ const NFTTab = ({ content, walletConnected, onMintNFT, isProcessing, nftResult }
         </div>
       </div>
 
-      {/* Mint Button */}
-      <div className="text-center">
-        <button
-          onClick={onMintNFT}
-          disabled={!walletConnected || isProcessing}
-          className={`px-8 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 mx-auto ${
-            !walletConnected
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : isProcessing
-              ? 'bg-purple-300 text-purple-600 cursor-not-allowed'
-              : 'bg-purple-600 text-white hover:bg-purple-700'
-          }`}
-        >
+     
           {isProcessing ? (
             <>
               <ArrowPathIcon className="w-5 h-5 animate-spin" />

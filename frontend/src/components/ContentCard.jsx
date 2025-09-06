@@ -34,9 +34,7 @@ const ContentCard = ({ item, onView, onDownload, onMintNFT, onDelete, mintingSta
           >
             <CheckCircleIcon className="w-2.5 h-2.5" />
             NFT
-            {item.chain && (
-              <span className="text-xs opacity-90">({item.chain})</span>
-            )}
+       
           </div>
         )}
         
@@ -59,21 +57,7 @@ const ContentCard = ({ item, onView, onDownload, onMintNFT, onDelete, mintingSta
                     ? 'bg-red-500 text-white hover:bg-red-600'
                     : 'bg-purple-500 text-white hover:bg-purple-600'
                 }`}
-                title={mintingStatus[item.id] === 'minting' ? 'Minting NFT...' : 'Mint as NFT'}
-              >
-                {mintingStatus[item.id] === 'minting' || mintingStatus[item.id] === 'uploading' ? (
-                  <ArrowPathIcon className="h-3.5 w-3.5 animate-spin" />
-                ) : mintingStatus[item.id] === 'error' ? (
-                  <ExclamationCircleIcon className="h-3.5 w-3.5" />
-                ) : (
-                  <SparklesIcon className="h-3.5 w-3.5" />
-                )}
-              </button>
-            ) : (
-              <button className="p-1.5 bg-green-500 text-white rounded-full cursor-default" title="Already minted as NFT">
-                <CheckCircleIcon className="h-3.5 w-3.5" />
-              </button>
-            )}
+        
             <button onClick={() => onDelete(item.id)} className="p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors" title="Delete">
               <TrashIcon className="h-3.5 w-3.5" />
             </button>

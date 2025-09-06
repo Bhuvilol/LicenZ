@@ -67,18 +67,7 @@ const ContentManager = ({
             verbwireData: existing.verbwireData || item.verbwireData || nftStatus[key]?.verbwireData
           };
           mergedMap.set(key, merged);
-        } else {
-          const itemWithNFT = {
-            ...item,
-            NFTMinted: item.NFTMinted || nftStatus[key]?.NFTMinted || false,
-            NFTTokenID: item.NFTTokenID || item.NFTTokenID || nftStatus[key]?.NFTTokenID,
-            contractAddress: item.contractAddress || item.contractAddress || nftStatus[key]?.contractAddress,
-            transactionHash: item.transactionHash || item.transactionHash || nftStatus[key]?.transactionHash,
-            chain: item.chain || item.chain || nftStatus[key]?.chain,
-            method: item.method || item.method || nftStatus[key]?.method,
-            mintedAt: item.mintedAt || item.mintedAt || nftStatus[key]?.mintedAt,
-            verbwireData: item.verbwireData || item.verbwireData || nftStatus[key]?.verbwireData
-          };
+        } 
           mergedMap.set(key, itemWithNFT);
         }
       }
@@ -100,11 +89,7 @@ const ContentManager = ({
     }
 
     if (filters.contentType && filters.contentType !== 'all') {
-      if (filters.contentType === 'ai-generated') {
-        filteredContent = filteredContent.filter(item => item.prompt && item.model);
-      } else if (filters.contentType === 'uploaded') {
-        filteredContent = filteredContent.filter(item => !item.prompt && !item.model);
-      }
+      
     }
 
     return filteredContent;
