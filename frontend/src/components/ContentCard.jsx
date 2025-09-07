@@ -9,7 +9,7 @@ import {
   ExclamationCircleIcon 
 } from '@heroicons/react/24/outline';
 
-const ContentCard = ({ item, onView, onDownload, onMintNFT, onDelete, mintingStatus }) => {
+const ContentCard = ({ item, onView, onShowModal, onDownload, onMintNFT, onDelete, mintingStatus }) => {
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <div className="aspect-[4/3] bg-gray-100 relative group">
@@ -42,7 +42,7 @@ const ContentCard = ({ item, onView, onDownload, onMintNFT, onDelete, mintingSta
         
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
           <div className="flex space-x-1.5">
-            <button onClick={() => onView(item)} className="p-1.5 bg-white text-gray-800 rounded-full hover:bg-gray-100 transition-colors" title="View Details">
+            <button onClick={() => { onView(item); onShowModal(); }} className="p-1.5 bg-white text-gray-800 rounded-full hover:bg-gray-100 transition-colors" title="View Details">
               <EyeIcon className="h-3.5 w-3.5" />
             </button>
             <button onClick={() => onDownload(item)} className="p-1.5 bg-white text-gray-800 rounded-full hover:bg-gray-100 transition-colors" title="Download">

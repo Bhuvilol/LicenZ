@@ -35,21 +35,12 @@ func NewSimplePersistentDB() *SimplePersistentDB {
 // loadFromDisk loads content from JSON file
 func (db *SimplePersistentDB) loadFromDisk() {
 	data, err := os.ReadFile(db.filePath)
-<<<<<<< HEAD
-<<<<<<< HEAD
-	
-=======
-=======
->>>>>>> 294729b (Integrated blockchain service for storing content on the Ethereum network.)
 	if err != nil {
 		// File doesn't exist yet, start with empty database
 		fmt.Printf("📁 No existing database found, starting fresh\n")
 		return
 	}
-<<<<<<< HEAD
->>>>>>> 294729b (Integrated blockchain service for storing content on the Ethereum network.)
-=======
->>>>>>> 294729b (Integrated blockchain service for storing content on the Ethereum network.)
+
 	
 	var contentList []models.Content
 	if err := json.Unmarshal(data, &contentList); err != nil {

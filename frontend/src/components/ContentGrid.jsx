@@ -1,7 +1,7 @@
 import React from 'react';
 import ContentCard from './ContentCard';
 
-const ContentGrid = ({ content, onView, onDownload, onMintNFT, onDelete, mintingStatus }) => {
+const ContentGrid = ({ content, onView, onShowModal, onDownload, onMintNFT, onDelete, mintingStatus }) => {
   return (
     <div className="max-w-4xl mx-auto px-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -10,6 +10,7 @@ const ContentGrid = ({ content, onView, onDownload, onMintNFT, onDelete, minting
             key={item.id}
             item={item}
             onView={onView}
+            onShowModal={onShowModal}
             onDownload={onDownload}
             onMintNFT={onMintNFT}
             onDelete={onDelete}

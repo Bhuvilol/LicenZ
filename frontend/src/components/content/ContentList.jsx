@@ -41,6 +41,7 @@ const ContentList = ({
     <ContentGrid 
       content={content}
       onView={onContentClick}
+      onShowModal={onShowModal}
       onMintNFT={onMintNFT}
       onDelete={onDelete}
       onDownload={onDownload}

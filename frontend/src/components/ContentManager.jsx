@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { contentAPI } from '../services/backendService.js';
+import nftService from '../services/nftService.js';
 import ContentHeader from './ContentHeader';
 import ContentList from './content/ContentList';
 import ContentModal from './ContentModal';
@@ -24,6 +25,25 @@ const ContentManager = ({
   const isFetchingRef = useRef(false);
 
   const { getCurrentWalletAddress } = useWallet();
+
+  const handleDownload = useCallback((item) => {
+    if (!item.ImageData) return;
+
+    setIsDownloading(true);
+    try {
+      const link = document.createElement('a');
+      link.href = `data:image/png;base64,${item.ImageData}`;
+      const fileName = item.prompt ? `${item.prompt.replace(/ /g, '_').slice(0, 30)}.png` : `licenz-content-${item.id}.png`;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      setError('Failed to download image.');
+    } finally {
+      setIsDownloading(false);
+    }
+  }, []);
 
   // Load NFT status from localStorage
   const loadNFTStatus = () => {
@@ -171,12 +191,60 @@ const ContentManager = ({
     }
   }, [content, onContentUpdate]);
 
+  const handleMintNFT = useCallback(async (item) => {
+    setMintingStatus(prev => ({ ...prev, [item.id]: 'minting' }));
+    setError(null);
+    try {
+      nftService.setWalletData(walletData);
+      const mintResult = await nftService.mintNFT(item, {});
+      
+      const updatedContent = {
+        ...item,
+        NFTMinted: true,
+        NFTTokenID: mintResult.tokenId,
+        transactionHash: mintResult.transactionHash,
+        contractAddress: mintResult.contractAddress,
+        chain: mintResult.chain,
+        verbwireData: mintResult.verbwireData,
+        mintedAt: new Date().toISOString(),
+      };
+
+      handleContentUpdate(updatedContent);
+      setMintingStatus(prev => ({ ...prev, [item.id]: 'success' }));
+
+      // Save NFT status to localStorage
+      const nftStatus = loadNFTStatus();
+      nftStatus[item.id] = {
+        NFTMinted: true,
+        NFTTokenID: mintResult.tokenId,
+        transactionHash: mintResult.transactionHash,
+        contractAddress: mintResult.contractAddress,
+        chain: mintResult.chain,
+        mintedAt: updatedContent.mintedAt,
+        verbwireData: mintResult.verbwireData,
+      };
+      saveNFTStatus(nftStatus);
+
+    } catch (err) {
+      setError(`Failed to mint NFT: ${err.message}`);
+      setMintingStatus(prev => ({ ...prev, [item.id]: 'error' }));
+    }
+  }, [walletData, handleContentUpdate]);
+
   // Handle content deletion
-  const handleContentDelete = useCallback((contentId) => {
-    setContent(prev => prev.filter(item => item.id !== contentId));
-    
-    if (onContentUpdate) {
-      onContentUpdate(content.filter(item => item.id !== contentId));
+  const handleContentDelete = useCallback(async (contentId) => {
+    setIsDeleting(true);
+    setError(null);
+    try {
+      await contentAPI.deleteContent(contentId);
+      setContent(prev => prev.filter(item => item.id !== contentId));
+      if (onContentUpdate) {
+        onContentUpdate(content.filter(item => item.id !== contentId));
+      }
+    } catch (err) {
+      setError('Failed to delete content.');
+    } finally {
+      setIsDeleting(false);
     }
   }, [content, onContentUpdate]);
 
@@ -222,9 +290,9 @@ const ContentManager = ({
         onRefresh={fetchContent}
         onContentClick={setSelectedContent}
         onShowModal={() => setShowModal(true)}
-        onMintNFT={handleContentUpdate}
+        onMintNFT={handleMintNFT}
         onDelete={handleContentDelete}
-        onDownload={() => {}}
+        onDownload={handleDownload}
         mintingStatus={mintingStatus}
         isDeleting={isDeleting}
         isDownloading={isDownloading}
@@ -237,9 +305,9 @@ const ContentManager = ({
             setShowModal(false);
             setSelectedContent(null);
           }}
-          onMintNFT={handleContentUpdate}
+          onMintNFT={handleMintNFT}
           onDelete={handleContentDelete}
-          onDownload={() => {}}
+          onDownload={handleDownload}
           mintingStatus={mintingStatus}
           isDeleting={isDeleting}
           isDownloading={isDownloading}
