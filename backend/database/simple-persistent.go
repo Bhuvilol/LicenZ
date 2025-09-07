@@ -36,13 +36,19 @@ func NewSimplePersistentDB() *SimplePersistentDB {
 func (db *SimplePersistentDB) loadFromDisk() {
 	data, err := os.ReadFile(db.filePath)
 <<<<<<< HEAD
+<<<<<<< HEAD
 	
 =======
+=======
+>>>>>>> 294729b (Integrated blockchain service for storing content on the Ethereum network.)
 	if err != nil {
 		// File doesn't exist yet, start with empty database
 		fmt.Printf("📁 No existing database found, starting fresh\n")
 		return
 	}
+<<<<<<< HEAD
+>>>>>>> 294729b (Integrated blockchain service for storing content on the Ethereum network.)
+=======
 >>>>>>> 294729b (Integrated blockchain service for storing content on the Ethereum network.)
 	
 	var contentList []models.Content
@@ -83,14 +89,10 @@ func (db *SimplePersistentDB) CreateContent(content models.Content) error {
 	db.content[content.ID] = content
 	
 	// Save to disk
-<<<<<<< HEAD
-	
-=======
 	if err := db.saveToDisk(); err != nil {
 		fmt.Printf("⚠️ Warning: Failed to save to disk: %v\n", err)
 		return err
 	}
->>>>>>> 294729b (Integrated blockchain service for storing content on the Ethereum network.)
 	
 	fmt.Printf("💾 Saved content %s to disk\n", content.ID)
 	return nil
