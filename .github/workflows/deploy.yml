@@ -1,0 +1,114 @@
+name: Deploy LicenZ
+
+on:
+  push:
+    branches: [ main, production ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Frontend Build and Deploy
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run linting
+      run: npm run lint
+    
+    - name: Build frontend
+      run: npm run build
+      env:
+        VITE_STABILITY_API_KEY: ${{ secrets.VITE_STABILITY_API_KEY }}
+        VITE_VERBWIRE_API_KEY: ${{ secrets.VITE_VERBWIRE_API_KEY }}
+        VITE_BACKEND_URL: ${{ secrets.VITE_BACKEND_URL }}
+    
+    - name: Deploy to Vercel
+      if: github.ref == 'refs/heads/main'
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: ./frontend
+
+  # Backend Build and Deploy
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.24'
+    
+    - name: Install dependencies
+      run: go mod download
+    
+    - name: Build backend
+      run: go build -o main .
+    
+    - name: Run tests
+      run: go test ./...
+    
+    - name: Deploy to Railway
+      if: github.ref == 'refs/heads/main'
+      uses: railway-app/railway-deploy@v1
+      with:
+        railway-token: ${{ secrets.RAILWAY_TOKEN }}
+        service: licenz-backend
+
+  # Blockchain Compile and Test
+  blockchain:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./blockchain
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: blockchain/package-lock.json
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Compile contracts
+      run: npm run compile
+    
+    - name: Run tests
+      run: npm run test
+    
+    - name: Deploy to Sepolia (Manual)
+      if: github.ref == 'refs/heads/main'
+      run: |
+        echo "Smart contracts compiled successfully!"
+        echo "To deploy to Sepolia, run: npm run deploy:sepolia"
+        echo "Make sure to set up your .env file with private key and RPC URL"

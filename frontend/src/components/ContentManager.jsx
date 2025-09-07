@@ -5,6 +5,7 @@ import ContentHeader from './ContentHeader';
 import ContentList from './content/ContentList';
 import ContentModal from './ContentModal';
 import ContentFilters from './content/ContentFilters';
+import MintingProgressModal from './MintingProgressModal';
 import { useWallet } from '../hooks/useWallet';
 
 const ContentManager = ({ 
@@ -22,6 +23,9 @@ const ContentManager = ({
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [filters, setFilters] = useState({});
+  const [showMintingModal, setShowMintingModal] = useState(false);
+  const [currentMintingContent, setCurrentMintingContent] = useState(null);
+  const [currentMintingStep, setCurrentMintingStep] = useState(null);
   const isFetchingRef = useRef(false);
 
   const { getCurrentWalletAddress } = useWallet();
@@ -192,11 +196,19 @@ const ContentManager = ({
   }, [content, onContentUpdate]);
 
   const handleMintNFT = useCallback(async (item) => {
-    setMintingStatus(prev => ({ ...prev, [item.id]: 'minting' }));
+    const onProgress = (status) => {
+      setMintingStatus(prev => ({ ...prev, [item.id]: status }));
+      setCurrentMintingStep(status);
+    };
+
     setError(null);
+    setCurrentMintingContent(item);
+    setShowMintingModal(true);
+    setCurrentMintingStep('uploading_image');
+
     try {
       nftService.setWalletData(walletData);
-      const mintResult = await nftService.mintNFT(item, {});
+      const mintResult = await nftService.mintNFT(item, {}, onProgress);
       
       const updatedContent = {
         ...item,
@@ -225,9 +237,13 @@ const ContentManager = ({
       };
       saveNFTStatus(nftStatus);
 
+      // Show success state in modal
+      setCurrentMintingStep('completed');
+
     } catch (err) {
       setError(`Failed to mint NFT: ${err.message}`);
       setMintingStatus(prev => ({ ...prev, [item.id]: 'error' }));
+      setCurrentMintingStep('error');
     }
   }, [walletData, handleContentUpdate]);
 
@@ -288,8 +304,14 @@ const ContentManager = ({
         loading={loading}
         error={error}
         onRefresh={fetchContent}
-        onContentClick={setSelectedContent}
-        onShowModal={() => setShowModal(true)}
+        onContentClick={(item) => {
+          console.log('Content clicked:', item.id);
+          setSelectedContent(item);
+        }}
+        onShowModal={() => {
+          console.log('Show modal called');
+          setShowModal(true);
+        }}
         onMintNFT={handleMintNFT}
         onDelete={handleContentDelete}
         onDownload={handleDownload}
@@ -300,19 +322,50 @@ const ContentManager = ({
       
       {showModal && selectedContent && (
         <ContentModal
-          content={selectedContent}
+          selectedContent={selectedContent}
           onClose={() => {
+            console.log('Modal closing');
             setShowModal(false);
             setSelectedContent(null);
           }}
           onMintNFT={handleMintNFT}
           onDelete={handleContentDelete}
           onDownload={handleDownload}
+          onCopyHash={(hash) => {
+            navigator.clipboard.writeText(hash);
+          }}
           mintingStatus={mintingStatus}
           isDeleting={isDeleting}
           isDownloading={isDownloading}
         />
       )}
+
+      {showMintingModal && currentMintingContent && (
+        <MintingProgressModal
+          isOpen={showMintingModal}
+          onClose={() => {
+            setShowMintingModal(false);
+            setCurrentMintingContent(null);
+            setCurrentMintingStep(null);
+          }}
+          mintingStatus={currentMintingStep}
+          contentData={currentMintingContent}
+          onSuccess={() => {
+            setShowMintingModal(false);
+            setCurrentMintingContent(null);
+            setCurrentMintingStep(null);
+            // Optionally show the content modal with the newly minted NFT
+            setSelectedContent(currentMintingContent);
+            setShowModal(true);
+          }}
+          onError={() => {
+            setShowMintingModal(false);
+            setCurrentMintingContent(null);
+            setCurrentMintingStep(null);
+          }}
+        />
+      )}
+      {console.log('ContentManager render - showModal:', showModal, 'selectedContent:', selectedContent?.id)}
     </div>
   );
 };

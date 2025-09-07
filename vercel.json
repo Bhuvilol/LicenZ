@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/dist/$1"
+    }
+  ],
+  "env": {
+    "VITE_STABILITY_API_KEY": "@vite_stability_api_key",
+    "VITE_VERBWIRE_API_KEY": "@vite_verbwire_api_key",
+    "VITE_OPENAI_API_KEY": "@vite_openai_api_key",
+    "VITE_REPLICATE_API_KEY": "@vite_replicate_api_key",
+    "VITE_BACKEND_URL": "@vite_backend_url"
+  }
+}

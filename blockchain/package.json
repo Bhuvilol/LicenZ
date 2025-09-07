@@ -4,10 +4,13 @@
   "version": "0.0.0",
   "scripts": {
     "deploy": "npx hardhat run scripts/deploy.js --network localhost",
+    "deploy:sepolia": "npx hardhat run scripts/deploy-sepolia.js --network sepolia",
+    "deploy:mumbai": "npx hardhat run scripts/deploy-sepolia.js --network mumbai",
     "test": "npx hardhat test",
     "compile": "npx hardhat compile",
     "node": "npx hardhat node",
-    "clean": "npx hardhat clean"
+    "clean": "npx hardhat clean",
+    "verify:sepolia": "npx hardhat verify --network sepolia"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.9.3",

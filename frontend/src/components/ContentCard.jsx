@@ -42,7 +42,11 @@ const ContentCard = ({ item, onView, onShowModal, onDownload, onMintNFT, onDelet
         
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
           <div className="flex space-x-1.5">
-            <button onClick={() => { onView(item); onShowModal(); }} className="p-1.5 bg-white text-gray-800 rounded-full hover:bg-gray-100 transition-colors" title="View Details">
+            <button onClick={() => { 
+              console.log('View button clicked for item:', item.id);
+              onView(item); 
+              onShowModal(); 
+            }} className="p-1.5 bg-white text-gray-800 rounded-full hover:bg-gray-100 transition-colors" title="View Details">
               <EyeIcon className="h-3.5 w-3.5" />
             </button>
             <button onClick={() => onDownload(item)} className="p-1.5 bg-white text-gray-800 rounded-full hover:bg-gray-100 transition-colors" title="Download">
@@ -51,26 +55,33 @@ const ContentCard = ({ item, onView, onShowModal, onDownload, onMintNFT, onDelet
             {!item.NFTMinted ? (
               <button
                 onClick={() => onMintNFT(item)}
-                disabled={mintingStatus[item.id] === 'minting' || mintingStatus[item.id] === 'uploading'}
-                className={`p-1.5 rounded-full transition-colors ${
-                  mintingStatus[item.id] === 'minting' || mintingStatus[item.id] === 'uploading'
-                    ? 'bg-purple-300 text-purple-600 cursor-not-allowed'
+                disabled={['uploading_image', 'uploading_metadata', 'minting'].includes(mintingStatus[item.id])}
+                className={`p-1.5 rounded-full transition-all duration-300 ${
+                  ['uploading_image', 'uploading_metadata', 'minting'].includes(mintingStatus[item.id])
+                    ? 'bg-purple-300 text-purple-600 cursor-not-allowed animate-pulse'
                     : mintingStatus[item.id] === 'error'
-                    ? 'bg-red-500 text-white hover:bg-red-600'
-                    : 'bg-purple-500 text-white hover:bg-purple-600'
+                    ? 'bg-red-500 text-white hover:bg-red-600 hover:scale-105'
+                    : 'bg-purple-500 text-white hover:bg-purple-600 hover:scale-105'
                 }`}
-                title={mintingStatus[item.id] === 'minting' ? 'Minting NFT...' : 'Mint as NFT'}
+                title={
+                  mintingStatus[item.id] === 'uploading_image' ? 'Uploading image to IPFS...' :
+                  mintingStatus[item.id] === 'uploading_metadata' ? 'Uploading metadata to IPFS...' :
+                  mintingStatus[item.id] === 'minting' ? 'Minting NFT on the blockchain...' :
+                  'Mint as NFT'
+                }
               >
-                {mintingStatus[item.id] === 'minting' || mintingStatus[item.id] === 'uploading' ? (
+                {['uploading_image', 'uploading_metadata', 'minting'].includes(mintingStatus[item.id]) ? (
                   <ArrowPathIcon className="h-3.5 w-3.5 animate-spin" />
                 ) : mintingStatus[item.id] === 'error' ? (
                   <ExclamationCircleIcon className="h-3.5 w-3.5" />
+                ) : mintingStatus[item.id] === 'success' ? (
+                  <CheckCircleIcon className="h-3.5 w-3.5" />
                 ) : (
                   <SparklesIcon className="h-3.5 w-3.5" />
                 )}
               </button>
             ) : (
-              <button className="p-1.5 bg-green-500 text-white rounded-full cursor-default" title="Already minted as NFT">
+              <button className="p-1.5 bg-green-500 text-white rounded-full cursor-default hover:bg-green-600 transition-colors" title="Already minted as NFT">
                 <CheckCircleIcon className="h-3.5 w-3.5" />
               </button>
             )}
@@ -93,10 +104,10 @@ const ContentCard = ({ item, onView, onShowModal, onDownload, onMintNFT, onDelet
             <CheckCircleIcon className="w-3 h-3" />
             <span>NFT Minted</span>
             {item.NFTTokenID && (
-              <span className="text-xs bg-green-100 px-1.5 py-0.5 rounded text-xs">ID: {item.NFTTokenID}</span>
+              <span className="text-xs bg-green-100 px-1.5 py-0.5 rounded">ID: {item.NFTTokenID}</span>
             )}
             {item.chain && (
-              <span className="text-xs bg-blue-100 px-1.5 py-0.5 rounded text-xs capitalize">{item.chain}</span>
+              <span className="text-xs bg-blue-100 px-1.5 py-0.5 rounded capitalize">{item.chain}</span>
             )}
           </div>
         )}

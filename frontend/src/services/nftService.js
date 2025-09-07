@@ -36,12 +36,13 @@ class NFTService {
     }
   }
 
-  async mintNFT(contentData, metadata) {
+  async mintNFT(contentData, metadata, onProgress) {
     return safeExecute(async () => {
       if (!this.isInitialized) {
         await this.initialize();
       }
 
+      onProgress('uploading_image');
       let imageBlob;
       if (contentData.ImageData) {
         imageBlob = await this.base64ToBlob(contentData.ImageData);
@@ -63,6 +64,7 @@ class NFTService {
         throw new Error('IPFS upload failed: Invalid result structure');
       }
 
+      onProgress('uploading_metadata');
       const nftMetadata = {
         name: `AI Generated: ${contentData.prompt}`,
         description: `AI-generated image created with ${contentData.model}`,
@@ -86,6 +88,7 @@ class NFTService {
         throw new Error('Metadata upload to IPFS failed: Invalid result structure');
       }
 
+      onProgress('minting');
       return await this.mintNFTWithVerbwire(nftMetadata, ipfsResult.url, contentData, metadataResult, ipfsResult);
     }, {
       function: 'mintNFT',

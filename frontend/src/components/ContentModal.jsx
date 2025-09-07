@@ -7,7 +7,12 @@ import {
   TrashIcon, 
   SparklesIcon, 
   ArrowPathIcon, 
-  ExclamationCircleIcon 
+  ExclamationCircleIcon,
+  ClipboardDocumentIcon as Copy,
+  ExclamationTriangleIcon as AlertCircle,
+  ArrowPathIcon as Loader2,
+  ArrowDownTrayIcon as Download,
+  TrashIcon as Trash2
 } from '@heroicons/react/24/outline';
 
 const ContentModal = ({ 
@@ -23,7 +28,10 @@ const ContentModal = ({
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
   
-  if (!selectedContent) return null;
+  if (!selectedContent) {
+    console.log('ContentModal: No selectedContent provided');
+    return null;
+  }
 
   // Copy to clipboard function
   const handleCopyToClipboard = async (text, fieldName) => {
@@ -40,6 +48,7 @@ const ContentModal = ({
     <div 
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-3 z-50"
       onClick={onClose}
+      style={{ zIndex: 9999 }}
     >
       <div 
         className="bg-white rounded-xl max-w-4xl w-full max-h-[80vh] overflow-y-auto"
@@ -312,17 +321,19 @@ const ContentModal = ({
                       </p>
                       <button
                         onClick={() => onMintNFT(selectedContent)}
-                        disabled={mintingStatus[selectedContent.id] === 'minting' || mintingStatus[selectedContent.id] === 'uploading'}
-                        className={`w-full px-6 py-3 rounded-lg font-semibold transition-all ${
-                          mintingStatus[selectedContent.id] === 'minting' || mintingStatus[selectedContent.id] === 'uploading'
-                            ? 'bg-purple-300 text-purple-600 cursor-not-allowed'
+                        disabled={['uploading_image', 'uploading_metadata', 'minting'].includes(mintingStatus[selectedContent.id])}
+                        className={`w-full px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                          ['uploading_image', 'uploading_metadata', 'minting'].includes(mintingStatus[selectedContent.id])
+                            ? 'bg-purple-300 text-purple-600 cursor-not-allowed animate-pulse'
                             : 'bg-purple-600 text-white hover:bg-purple-700 transform hover:scale-105'
                         }`}
                       >
-                        {mintingStatus[selectedContent.id] === 'minting' || mintingStatus[selectedContent.id] === 'uploading' ? (
+                        {['uploading_image', 'uploading_metadata', 'minting'].includes(mintingStatus[selectedContent.id]) ? (
                           <div className="flex items-center justify-center gap-2">
                             <Loader2 className="h-5 w-5 animate-spin" />
-                            Minting...
+                            {mintingStatus[selectedContent.id] === 'uploading_image' && 'Uploading Image...'}
+                            {mintingStatus[selectedContent.id] === 'uploading_metadata' && 'Creating Metadata...'}
+                            {mintingStatus[selectedContent.id] === 'minting' && 'Minting NFT...'}
                           </div>
                         ) : (
                           <div className="flex items-center justify-center gap-2">
@@ -441,17 +452,19 @@ const ContentModal = ({
                          {!selectedContent.NFTMinted ? (
                <button
                  onClick={() => onMintNFT(selectedContent)}
-                 disabled={mintingStatus[selectedContent.id] === 'minting' || mintingStatus[selectedContent.id] === 'uploading'}
-                 className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-colors text-sm ${
-                   mintingStatus[selectedContent.id] === 'minting' || mintingStatus[selectedContent.id] === 'uploading'
-                     ? 'bg-purple-300 text-purple-600 cursor-not-allowed'
-                     : 'bg-purple-500 text-white hover:bg-purple-600'
+                 disabled={['uploading_image', 'uploading_metadata', 'minting'].includes(mintingStatus[selectedContent.id])}
+                 className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-all duration-300 text-sm ${
+                   ['uploading_image', 'uploading_metadata', 'minting'].includes(mintingStatus[selectedContent.id])
+                     ? 'bg-purple-300 text-purple-600 cursor-not-allowed animate-pulse'
+                     : 'bg-purple-500 text-white hover:bg-purple-600 hover:scale-105'
                  }`}
                >
-                 {mintingStatus[selectedContent.id] === 'minting' || mintingStatus[selectedContent.id] === 'uploading' ? (
+                 {['uploading_image', 'uploading_metadata', 'minting'].includes(mintingStatus[selectedContent.id]) ? (
                    <>
                      <Loader2 className="h-4 w-4 inline mr-2 animate-spin" />
-                     Minting...
+                     {mintingStatus[selectedContent.id] === 'uploading_image' && 'Uploading...'}
+                     {mintingStatus[selectedContent.id] === 'uploading_metadata' && 'Creating...'}
+                     {mintingStatus[selectedContent.id] === 'minting' && 'Minting...'}
                    </>
                  ) : (
                    <>
@@ -461,7 +474,7 @@ const ContentModal = ({
                  )}
                </button>
              ) : (
-               <button className="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg cursor-default font-semibold text-sm">
+               <button className="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg cursor-default font-semibold text-sm hover:bg-green-600 transition-colors">
                  <CheckCircle className="h-4 w-4 inline mr-2" />
                  NFT Minted
                </button>
