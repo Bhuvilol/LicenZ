@@ -122,6 +122,14 @@ contract LicenZContent is ERC721, Ownable {
             licensedAt: 0
         });
 
+        contents[newTokenId] = newContent;
+        creatorContent[msg.sender].push(newTokenId);
+        ipfsToToken[ipfsHash] = newTokenId;
+        creatorContentCount[msg.sender]++;
+
+        _safeMint(msg.sender, newTokenId);
+
+        emit ContentCreated(newTokenId, msg.sender, prompt, ipfsHash, block.timestamp);
         
         return newTokenId;
     }
@@ -153,7 +161,10 @@ contract LicenZContent is ERC721, Ownable {
      * @param tokenId The content token ID
      */
     function purchaseLicense(uint256 tokenId) public payable {
-        
+        require(_exists(tokenId), "Content does not exist");
+        require(contents[tokenId].isLicensed, "Content is not licensed");
+        require(msg.value >= contents[tokenId].licensePrice, "Insufficient payment");
+        require(contents[tokenId].licensee == address(0), "Content already licensed");
 
         Content storage content = contents[tokenId];
         content.licensee = msg.sender;
@@ -239,7 +250,10 @@ contract LicenZContent is ERC721, Ownable {
         require(_exists(tokenId), "Content does not exist");
         require(ownerOf(tokenId) == msg.sender, "Only content owner can update");
         
-       
+        Content storage content = contents[tokenId];
+        content.prompt = newPrompt;
+        content.licenseTerms = newTerms;
+        content.licensePrice = newPrice;
 
         emit ContentUpdated(tokenId, newPrompt, newTerms, newPrice);
     }

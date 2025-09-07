@@ -64,10 +64,7 @@ func main() {
 	})
 
 	// Start the server
-	log.Println("🚀 Starting LicenZ backend server on port 8080...")
-	log.Println("📡 Server will be available at: http://localhost:8080")
-	log.Println("🔗 API endpoints available at: http://localhost:8080/api")
-	log.Fatal(r.Run(":8080"))
+	
 }
 
 // Health check endpoint

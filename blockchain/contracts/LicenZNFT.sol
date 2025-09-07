@@ -68,7 +68,10 @@ contract LicenZNFT is ERC721, ERC721URIStorage, Ownable {
         _setTokenURI(newTokenId, uri);
         
         // Store content hash and creator information
-        
+        contentHashToTokenId[contentHash] = newTokenId;
+        tokenIdToContentHash[newTokenId] = contentHash;
+        tokenCreators[newTokenId] = msg.sender;
+        tokenCreationTime[newTokenId] = block.timestamp;
         
         emit NFTMinted(newTokenId, msg.sender, contentHash, uri, block.timestamp);
         
@@ -114,7 +117,9 @@ contract LicenZNFT is ERC721, ERC721URIStorage, Ownable {
     /**
      * @dev Override required by Solidity
      */
-
+    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+        super._burn(tokenId);
+    }
     
     /**
      * @dev Override required by Solidity

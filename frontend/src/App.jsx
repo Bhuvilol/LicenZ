@@ -133,7 +133,17 @@ function App() {
   const stylePresets = useMemo(() => getStylePresets(), []);
   const availableOptions = useMemo(() => getGenerationOptions(), []);
 
-
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <LoadingState 
+          type="blockchain" 
+          message="Initializing LicenZ..." 
+          size="xl"
+        />
+      </div>
+    );
+  }
 
   if (!isWalletConnected) {
     return (
@@ -253,7 +263,11 @@ function App() {
         )}
 
         {activeTab === 'blockchain' && (
-          
+          <Tab
+            generatedContent={generatedContent}
+            walletConnected={isWalletConnected}
+            onDisconnect={() => setIsWalletConnected(false)}
+          />
         )}
       </div>
     </div>
