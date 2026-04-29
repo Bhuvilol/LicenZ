@@ -11,7 +11,7 @@ The project is organized into three main folders for better separation of concer
 - User interface components
 - Wallet integration
 - Content management
-- Design system and UI components
+- Design system and UI components ..
 
 ### 🔧 **Backend** (`/backend`)
 - Go server with Gin framework
